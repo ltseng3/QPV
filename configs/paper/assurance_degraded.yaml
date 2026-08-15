@@ -1,0 +1,26 @@
+propagation_speed_m_s: 299792458.0
+verifiers:
+  - id: v_east
+    x_m: 100
+    y_m: 0
+    deadline: 673.80 ns
+    deterministic_offset: 0 ns
+    error: {type: gaussian, mean: 0 ns, stddev: 5 ns}
+  - id: v_west
+    x_m: -100
+    y_m: 0
+    deadline: 673.80 ns
+    deterministic_offset: 0 ns
+    error: {type: gaussian, mean: 0 ns, stddev: 1 ns}
+  - id: v_north
+    x_m: 0
+    y_m: 100
+    deadline: 673.80 ns
+    deterministic_offset: 0 ns
+    error: {type: gaussian, mean: 0 ns, stddev: 1 ns}
+  - id: v_south
+    x_m: 0
+    y_m: -100
+    deadline: 673.80 ns
+    deterministic_offset: 0 ns
+    error: {type: gaussian, mean: 0 ns, stddev: 1 ns}
