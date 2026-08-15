@@ -1,0 +1,17 @@
+{
+  "ideal": {
+    "events.ndjson": "9297e78f92eff5a08208d3e69d57d653a602f935fd003976d816dd1544b55aae",
+    "rounds.csv": "759de837dec3320ad87ef414bdc3bd0a80c9356e5277a2e7d65613490c006446",
+    "summary.json": "7d41785f38d87a1317ee82a55ec2b4a1021dbf3f679828e010bc2aea57656446"
+  },
+  "intercept_resend": {
+    "events.ndjson": "8506b7ad2c1b36a23afa9c09b27c1f3bdc94fa8039eaaae4bcb2a9e36a744693",
+    "rounds.csv": "9f20219ea706b9726f47a5214751204c061873abe62e19da2e3f03e03b7847cc",
+    "summary.json": "267469b4fb81e9071ebfd6e3df69ddb86e316740ac7acbd2d2b60c0a4417a4d5"
+  },
+  "schedule_skew": {
+    "events.ndjson": "6b7ae64506ab61d86830d942fd1cb1f5e268c57fa4b0a49f1fb33bd3692e5650",
+    "rounds.csv": "594651654e93bb7fad4dfce3e3094419f84123052eeb34b2d951976abec7fe49",
+    "summary.json": "cc3917ec736149ec4b107aaacd38192cfac639c0db8d39236563b6770b99ad23"
+  }
+}

@@ -1,0 +1,6 @@
+base_config: ../attacks/intercept_resend.yaml
+parameters:
+  attacks[0].position_m: [-900, -700, -500, -300, -100]
+  attacks[0].processing_latency: ["0 ns", "100 ns", "500 ns", "1 us"]
+replicates: 5
+seed_strategy: deterministic_sequence

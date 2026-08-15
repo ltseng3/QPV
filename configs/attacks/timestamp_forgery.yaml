@@ -1,0 +1,132 @@
+schema_version: '1.0'
+simulation:
+  seed: 12345
+  stop_time: 100 ms
+  rounds: 100
+  quantum_formalism: density_matrix
+execution:
+  model: sequence_qpv
+  parallel_processes: 1
+geometry:
+  dimension: 1
+  propagation_speed_quantum_m_s: 2.0e8
+  propagation_speed_classical_m_s: 2.0e8
+  nodes:
+    controller:
+      x_m: 0
+      y_m: 0
+    v0:
+      x_m: -1000
+      y_m: 0
+    prover:
+      x_m: 0
+      y_m: 0
+    v1:
+      x_m: 1000
+      y_m: 0
+hardware:
+  v0:
+    epr_source:
+      generation_latency: 100 ns
+      success_probability: 1.0
+      pair_fidelity: 0.99
+      repetition_rate_hz: 1.0e6
+    memory:
+      load_latency: 100 ns
+      retrieve_latency: 100 ns
+      load_efficiency: 1.0
+      retrieve_efficiency: 1.0
+      t1: 1 ms
+      t2: 1 ms
+      maximum_hold: 100 us
+    measurement:
+      basis_switch_latency: 20 ns
+      measurement_latency: 100 ns
+      measurement_fidelity: 0.99
+      dead_time: 10 ns
+  prover:
+    qnd:
+      operation_latency: 100 ns
+      efficiency: 0.95
+      dark_count_rate_hz: 0
+      state_survival_probability: 0.99
+      disturbance_probability: 0.01
+      dead_time: 10 ns
+      gate_width: 2 us
+    memory:
+      load_latency: 100 ns
+      retrieve_latency: 100 ns
+      load_efficiency: 1.0
+      retrieve_efficiency: 1.0
+      t1: 1 ms
+      t2: 20 us
+      maximum_hold: 100 us
+    measurement:
+      basis_switch_latency: 20 ns
+      measurement_latency: 100 ns
+      measurement_fidelity: 0.98
+      dead_time: 10 ns
+links:
+  quantum:
+  - id: v0-prover-q
+    source: v0
+    destination: prover
+    attenuation_db_per_m: 2.0e-05
+    polarization_fidelity: 0.995
+    frequency_hz: 8.0e7
+  classical:
+  - id: controller-v0
+    source: controller
+    destination: v0
+  - id: controller-v1
+    source: controller
+    destination: v1
+  - id: controller-prover
+    source: controller
+    destination: prover
+  - id: v0-prover-c
+    source: v0
+    destination: prover
+  - id: prover-v0
+    source: prover
+    destination: v0
+  - id: v1-prover
+    source: v1
+    destination: prover
+  - id: prover-v1
+    source: prover
+    destination: v1
+  - id: v0-controller
+    source: v0
+    destination: controller
+  - id: v1-controller
+    source: v1
+    destination: controller
+protocol:
+  basis_function: xor
+  challenge_to_basis_delay: 5 us
+  commitment_window: 2 us
+  response_slack: 1 us
+  minimum_committed_rounds: 1
+  maximum_qber: 0.15
+  maximum_timing_violations: 0
+  maximum_authenticated_radius_m: 100
+  initial_start: 1 us
+controller:
+  policy: baseline
+  calibration_age_limit: 60 s
+  clock_uncertainty: 50 ns
+  maximum_basis_skew: 100 ns
+attacks:
+- type: timestamp_forgery
+  id: forge-v0-time
+  node_id: v0
+  bias: -2 us
+  fields:
+  - commitment_arrival
+  - answer_arrival
+output:
+  directory: runs/timestamp-forgery
+  trace_level: full
+  write_round_csv: true
+  write_event_ndjson: true
