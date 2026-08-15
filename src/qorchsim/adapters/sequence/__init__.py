@@ -1,0 +1,1 @@
+"""Narrow SeQUeNCe integration boundary."""
