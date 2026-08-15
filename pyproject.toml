@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qorchsim"
+version = "0.1.0"
+description = "Discrete-event simulator for quantum position verification security and quantum resource orchestration"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = {text = "Apache-2.0"}
+authors = [{name = "QOrchSim contributors"}]
+dependencies = [
+  "sequence==1.0.0",
+  "pydantic>=2.11,<3",
+  "pyyaml>=6.0,<7",
+  "typer>=0.16,<1",
+  "numpy>=2.3,<3",
+  "pandas>=2.3,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9,<10",
+  "pytest-cov>=7,<8",
+  "hypothesis>=6,<7",
+  "ruff>=0.15,<1",
+  "mypy>=1.18,<2",
+]
+
+[project.scripts]
+qorchsim = "qorchsim.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["qorchsim*"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "sequence: requires the external SeQUeNCe 1.0.0 package",
+  "performance: advisory performance test",
+]
+
+[tool.coverage.run]
+source = ["qorchsim"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "C4", "UP", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["qorchsim"]
+warn_unused_ignores = true
+exclude = ["src/qorchsim/adapters/sequence"]
