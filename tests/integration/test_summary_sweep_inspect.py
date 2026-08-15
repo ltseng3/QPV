@@ -51,3 +51,6 @@ def test_small_sweep_expands_and_runs(ideal_raw: dict, tmp_path: Path) -> None:
     result = run_sweep(sweep, tmp_path / "sweep-output", processes=1)
     assert result["completed"] == 2
     assert result["failed"] == 0
+    assert result["results"][0]["replicate"] == 0
+    assert result["results"][0]["parameters"] == {"hardware.prover.memory.t2": "100 us"}
+    assert result["results"][0]["seed"] == ideal_raw["simulation"]["seed"]
