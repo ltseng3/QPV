@@ -11,7 +11,6 @@ from typing import Any
 
 import yaml
 
-from qorchsim.config.loader import load_config
 from qorchsim.config.models import QOrchSimConfig
 from qorchsim.experiments.runner import run_experiment
 
@@ -59,19 +58,36 @@ def run_sweep(path: str | Path, output_directory: str | Path, processes: int = 1
     output = Path(output_directory)
     output.mkdir(parents=True, exist_ok=True)
     points = expand_sweep(path)
+
     jobs = []
+    metadata = []
     for index, (config, parameters, replicate) in enumerate(points):
         jobs.append((config, output / f"point-{index:05d}"))
+        metadata.append(
+            {
+                "index": index,
+                "parameters": parameters,
+                "replicate": replicate,
+                "seed": config.simulation.seed,
+            }
+        )
+
     results: list[dict[str, object]] = []
     failures: list[dict[str, object]] = []
+
+    def success(index: int, run_id: str, summary: dict[str, object]) -> dict[str, object]:
+        return {**metadata[index], "run_id": run_id, "summary": summary}
+
+    def failure(index: int, exc: Exception) -> dict[str, object]:
+        return {**metadata[index], "error": f"{type(exc).__name__}: {exc}"}
+
     if processes == 1:
-        iterator = []
         for index, job in enumerate(jobs):
             try:
                 run_id, summary = _run_point(job)
-                results.append({"index": index, "run_id": run_id, "summary": summary})
+                results.append(success(index, run_id, summary))
             except Exception as exc:
-                failures.append({"index": index, "error": f"{type(exc).__name__}: {exc}"})
+                failures.append(failure(index, exc))
     else:
         with ProcessPoolExecutor(max_workers=processes) as pool:
             future_map = {pool.submit(_run_point, job): index for index, job in enumerate(jobs)}
@@ -79,9 +95,20 @@ def run_sweep(path: str | Path, output_directory: str | Path, processes: int = 1
                 index = future_map[future]
                 try:
                     run_id, summary = future.result()
-                    results.append({"index": index, "run_id": run_id, "summary": summary})
+                    results.append(success(index, run_id, summary))
                 except Exception as exc:
-                    failures.append({"index": index, "error": f"{type(exc).__name__}: {exc}"})
-    aggregate = {"points": len(points), "completed": len(results), "failed": len(failures), "results": results, "failures": failures}
-    (output / "sweep-summary.json").write_text(json.dumps(aggregate, indent=2, sort_keys=True), encoding="utf-8")
+                    failures.append(failure(index, exc))
+
+    results.sort(key=lambda item: int(item["index"]))
+    failures.sort(key=lambda item: int(item["index"]))
+    aggregate = {
+        "points": len(points),
+        "completed": len(results),
+        "failed": len(failures),
+        "results": results,
+        "failures": failures,
+    }
+    (output / "sweep-summary.json").write_text(
+        json.dumps(aggregate, indent=2, sort_keys=True), encoding="utf-8"
+    )
     return aggregate
